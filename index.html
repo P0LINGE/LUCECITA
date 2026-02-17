@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+</head>
+<body>
+
+<h2>💌 Ella</h2>
+
+<button onclick="send('estoy feliz')">😊 Estoy feliz</button>
+<button onclick="send('estoy triste')">😢 Estoy triste</button>
+<button onclick="send('estoy preocupada')">😟 Estoy preocupada</button>
+<button onclick="send('voy a dormir')">🌙 Me voy a dormir</button>
+<button onclick="send('pensé en ti')">💭 Pensé en ti</button>
+<button onclick="send(' podemos hablar')">💬 ¿Podemos hablar?</button>
+
+<h3>Respuesta de él:</h3>
+<p id="resp">---</p>
+
+<h3>Estado de él:</h3>
+<p id="estado">---</p>
+
+<script>
+const client = mqtt.connect("wss://test.mosquitto.org:8081");
+
+client.on("connect", () => {
+  client.subscribe("yo/respondo");
+  client.subscribe("estado/yo");
+});
+
+client.on("message", (t, m) => {
+  if (t === "yo/respondo") resp.innerText = m.toString();
+  if (t === "estado/yo") estado.innerText = m.toString();
+});
+
+function send(msg) {
+  client.publish("ella/envia", msg);
+}
+</script>
+
+</body>
+</html>
